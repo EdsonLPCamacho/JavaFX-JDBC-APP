@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import model.service.DepartmentService;
 
 public class MainViewController implements Initializable {
 
@@ -48,7 +49,7 @@ public class MainViewController implements Initializable {
         // Initialization code if needed
     }
 
-    private void loadView(String namePath) {
+    private synchronized  void loadView(String namePath) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(namePath));
             VBox newVBox = fxmlLoader.load();
@@ -61,6 +62,12 @@ public class MainViewController implements Initializable {
             mainVBox.getChildren().clear();
             mainVBox.getChildren().add(mainMenu);
             mainVBox.getChildren().addAll(newVBox.getChildren());
+            
+            //Injecting Dependency
+            DepartmentController controller = fxmlLoader.getController();
+            controller.setDepartmentService(new DepartmentService());
+            controller.showTableList();
+            
         } catch (IOException e) {
             System.err.println("Error FXML: " + e.getMessage());
             e.printStackTrace();

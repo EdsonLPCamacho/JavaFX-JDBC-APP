@@ -6,6 +6,8 @@ module Javafxjdbc {
 
     opens gui to javafx.fxml; 
     opens application to javafx.graphics; 
+    opens model.entities to javafx.base;    
+
 
     exports gui; 
 }
