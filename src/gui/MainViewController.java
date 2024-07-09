@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import javafx.event.ActionEvent;
@@ -34,14 +35,15 @@ public class MainViewController implements Initializable {
 
     @FXML
     public void onMenuItemDepartmentAction(ActionEvent event) {
-    	loadView("/gui/Department.fxml");
+        loadView("/gui/Department.fxml", (DepartmentController controller) -> {
+            controller.setDepartmentService(new DepartmentService());
+            controller.showTableList();
+        });
     }
 
     @FXML
     public void onMenuItemAboutAction(ActionEvent event) {
-        loadView("/gui/About.fxml");
-        
-        
+        loadView("/gui/About.fxml", x -> {});
     }
 
     @Override
@@ -49,27 +51,27 @@ public class MainViewController implements Initializable {
         // Initialization code if needed
     }
 
-    private synchronized  void loadView(String namePath) {
+    private synchronized <T> void loadView(String namePath, Consumer<T> initAction) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(namePath));
             VBox newVBox = fxmlLoader.load();
 
             Scene mainScene = Main.getMainScene();
-
             VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
 
             Node mainMenu = mainVBox.getChildren().get(0);
             mainVBox.getChildren().clear();
             mainVBox.getChildren().add(mainMenu);
             mainVBox.getChildren().addAll(newVBox.getChildren());
-            
-            //Injecting Dependency
-            DepartmentController controller = fxmlLoader.getController();
-            controller.setDepartmentService(new DepartmentService());
-            controller.showTableList();
+
+            T controller = fxmlLoader.getController();
+            initAction.accept(controller);
             
         } catch (IOException e) {
-            System.err.println("Error FXML: " + e.getMessage());
+            System.err.println("Error loading FXML: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
