@@ -45,7 +45,8 @@ public class DepartmentController implements Initializable {
 	public void onBtNewAction(ActionEvent event) {
 		
 		Stage parentStage = UtilDialog.currentStage(event);
-		FormDialog("/gui/DepartmentForm.fxml", parentStage );
+		Department obj = new Department();
+		FormDialog(obj, "/gui/DepartmentForm.fxml", parentStage );
 		
 	}
 	
@@ -81,12 +82,16 @@ public class DepartmentController implements Initializable {
 		tvDepartment.setItems(obsList);
 	}
 
-	private void FormDialog(String namePath, Stage parentStage) {
+	private void FormDialog(Department obj, String namePath, Stage parentStage) {
 		
 		try {
 			
 			 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(namePath));
 			 Pane pane = fxmlLoader.load();
+			 
+			 DepartmentFormController controller = fxmlLoader.getController();
+			 controller.setDepartment(obj);
+			 controller.updateFormData();
 			 
 			 Stage dialogStage = new Stage();
 			 dialogStage.setTitle("Enter Department Title");
