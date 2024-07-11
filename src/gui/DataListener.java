@@ -1,7 +1,7 @@
 package gui;
 
 public interface DataListener {
-	 void onDataChanged() {
+	 default void onDataChanged() {
 		
 	}
 
