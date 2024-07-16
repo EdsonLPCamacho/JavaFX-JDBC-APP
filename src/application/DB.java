@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import db.DbException;
+
 public class DB {
 
     private static Connection conn = null;
@@ -17,11 +19,9 @@ public class DB {
         if (conn == null) {
             try {
                 Properties props = loadProperties();
-                String url = props.getProperty("dburl") + "?useSSL=false&allowPublicKeyRetrieval=true";
-                String user = props.getProperty("user");
-                String password = props.getProperty("password");
+                String url = props.getProperty("dburl") + "?useSSL=" + props.getProperty("useSSL") + "&allowPublicKeyRetrieval=true";
                 Class.forName("com.mysql.cj.jdbc.Driver"); 
-                conn = DriverManager.getConnection(url, user, password);
+                conn = DriverManager.getConnection(url, props);
             } catch (SQLException e) {
                 throw new DbException(e.getMessage());
             } catch (ClassNotFoundException e) {
