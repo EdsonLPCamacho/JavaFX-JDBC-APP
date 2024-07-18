@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -43,6 +44,12 @@ public class SellerController implements Initializable, DataListener {
     @FXML
     private TableColumn<Seller, String> tbColumnName;
     @FXML
+    private TableColumn<Seller, String> tbColumnEmail;
+    @FXML
+    private TableColumn<Seller, Date> tbColumnBirthDate;
+    @FXML
+    private TableColumn<Seller, Double> tbColumnBaseSalary;
+    @FXML
     private TableColumn<Seller, Seller> tbColumnEdit;
     @FXML
     private TableColumn<Seller, Seller> tbColumnDelete;
@@ -70,7 +77,12 @@ public class SellerController implements Initializable, DataListener {
     private void initializeNodes() {
         tbColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         tbColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-
+        tbColumnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        tbColumnBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+        UtilDialog.formatTableColumnDate(tbColumnBirthDate, "dd/MM/yyyy");
+        tbColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
+        UtilDialog.formatTableColumnDouble(tbColumnBaseSalary, 2);
+        
         Stage stage = (Stage) Main.getMainScene().getWindow();
         tvSeller.prefHeightProperty().bind(stage.heightProperty());
 
