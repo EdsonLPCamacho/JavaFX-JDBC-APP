@@ -204,7 +204,7 @@ public class SellerController implements Initializable, DataListener {
 
 
     private void createDialogForm(Seller obj, String absoluteName, Stage parentStage) {
-       /*
+      
     	try {
         	
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -226,7 +226,7 @@ public class SellerController implements Initializable, DataListener {
         } catch (IOException e) {
             Alerts.showMessage("IOException", "Error", e.getMessage(), AlertType.ERROR);
         }
-        */
+        
     }
     
 }

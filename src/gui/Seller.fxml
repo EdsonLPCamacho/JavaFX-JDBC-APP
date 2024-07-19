@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="285.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerController">
+<VBox prefHeight="285.0" prefWidth="465.0" style="-fx-background-color: #6F6F6F;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerController">
    <children>
       <Label prefHeight="30.0" prefWidth="141.0" text="Seller Sign in">
          <font>
@@ -22,12 +22,12 @@
             <Insets bottom="5.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </Label>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
+      <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #7C7C7C;">
         <items>
-          <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="New" />
+          <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" style="-fx-background-color: #6C6C6C; -fx-text-fill: #F0F0F0;" text="New" />
         </items>
       </ToolBar>
-      <TableView fx:id="tvSeller" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tvSeller" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #D3D3D3;">
         <columns>
           <TableColumn fx:id="tbColumnId" prefWidth="75.0" text="Id" />
           <TableColumn fx:id="tbColumnName" prefWidth="75.0" text="Name" />
