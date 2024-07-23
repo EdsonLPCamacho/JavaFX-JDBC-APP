@@ -31,11 +31,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.entities.Seller;
+import model.service.DepartmentService;
 import model.service.SellerService;
 
 public class SellerController implements Initializable, DataListener {
 
     private SellerService service;
+    private DepartmentService departmentService; 
 
     @FXML
     private TableView<Seller> tvSeller;
@@ -53,6 +55,7 @@ public class SellerController implements Initializable, DataListener {
     private TableColumn<Seller, Seller> tbColumnEdit;
     @FXML
     private TableColumn<Seller, Seller> tbColumnDelete;
+    
     @FXML    
     private Button btNew;
 
@@ -67,6 +70,10 @@ public class SellerController implements Initializable, DataListener {
 
     public void setSellerService(SellerService service) {
         this.service = service;
+    }
+
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService; // Adiciona este método
     }
 
     @Override
@@ -106,7 +113,7 @@ public class SellerController implements Initializable, DataListener {
 
             SellerFormController controller = fxmlLoader.getController();
             controller.setSeller(obj);
-            controller.setSellerService(new SellerService());
+            controller.setServices(new SellerService(), departmentService); // Passa o departmentService aqui
             controller.subscribeDataListener(this);
             controller.updateFormData();
 
@@ -202,17 +209,15 @@ public class SellerController implements Initializable, DataListener {
     }
     
 
-
     private void createDialogForm(Seller obj, String absoluteName, Stage parentStage) {
-      
-    	try {
-        	
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             Pane pane = loader.load();
 
             SellerFormController controller = loader.getController();
             controller.setSeller(obj);
-            controller.setSellerService(new SellerService());
+            controller.setServices(new SellerService(), new DepartmentService()); // Passa os serviços aqui também
+            controller.loadAssociatedObjects();
             controller.subscribeDataListener(this);
             controller.updateFormData();
 
@@ -226,7 +231,6 @@ public class SellerController implements Initializable, DataListener {
         } catch (IOException e) {
             Alerts.showMessage("IOException", "Error", e.getMessage(), AlertType.ERROR);
         }
-        
     }
     
 }
