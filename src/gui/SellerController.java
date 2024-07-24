@@ -37,7 +37,6 @@ import model.service.SellerService;
 public class SellerController implements Initializable, DataListener {
 
     private SellerService service;
-    private DepartmentService departmentService; 
 
     @FXML
     private TableView<Seller> tvSeller;
@@ -55,7 +54,7 @@ public class SellerController implements Initializable, DataListener {
     private TableColumn<Seller, Seller> tbColumnEdit;
     @FXML
     private TableColumn<Seller, Seller> tbColumnDelete;
-    
+
     @FXML    
     private Button btNew;
 
@@ -65,15 +64,11 @@ public class SellerController implements Initializable, DataListener {
     public void onBtNewAction(ActionEvent event) {
         Stage parentStage = UtilDialog.currentStage(event);
         Seller obj = new Seller();
-        FormDialog(obj, "/gui/SellerForm.fxml", parentStage);
+        createDialogForm(obj, "/gui/SellerForm.fxml", parentStage);
     }
 
     public void setSellerService(SellerService service) {
         this.service = service;
-    }
-
-    public void setDepartmentService(DepartmentService departmentService) {
-        this.departmentService = departmentService; // Adiciona este método
     }
 
     @Override
@@ -89,7 +84,7 @@ public class SellerController implements Initializable, DataListener {
         UtilDialog.formatTableColumnDate(tbColumnBirthDate, "dd/MM/yyyy");
         tbColumnBaseSalary.setCellValueFactory(new PropertyValueFactory<>("baseSalary"));
         UtilDialog.formatTableColumnDouble(tbColumnBaseSalary, 2);
-        
+
         Stage stage = (Stage) Main.getMainScene().getWindow();
         tvSeller.prefHeightProperty().bind(stage.heightProperty());
 
@@ -106,19 +101,20 @@ public class SellerController implements Initializable, DataListener {
         tvSeller.setItems(obsList);
     }
 
-    private void FormDialog(Seller obj, String namePath, Stage parentStage) {
+    private void createDialogForm(Seller obj, String absoluteName, Stage parentStage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(namePath));
-            Pane pane = fxmlLoader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+            Pane pane = loader.load();
 
-            SellerFormController controller = fxmlLoader.getController();
+            SellerFormController controller = loader.getController();
             controller.setSeller(obj);
-            controller.setServices(new SellerService(), departmentService); // Passa o departmentService aqui
+            controller.setServices(new SellerService(), new DepartmentService());
+            controller.loadAssociatedObjects();
             controller.subscribeDataListener(this);
             controller.updateFormData();
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Enter Seller Title");
+            dialogStage.setTitle("Enter Seller data");
             dialogStage.setScene(new Scene(pane));
             dialogStage.setResizable(false);
             dialogStage.initOwner(parentStage);
@@ -142,16 +138,17 @@ public class SellerController implements Initializable, DataListener {
         List<Seller> list = service.findAll();
         obsList = FXCollections.observableArrayList(list);
         tvSeller.setItems(obsList);
+        initEditButtons();
         initDeleteButtons();
     }
-    
+
     private void initEditButtons() {
         tbColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         tbColumnEdit.setCellFactory(new Callback<TableColumn<Seller, Seller>, TableCell<Seller, Seller>>() {
             @Override
             public TableCell<Seller, Seller> call(TableColumn<Seller, Seller> param) {
                 return new TableCell<Seller, Seller>() {
-                    private final Button button = new Button("edit");   
+                    private final Button button = new Button("edit");
 
                     @Override
                     protected void updateItem(Seller obj, boolean empty) {
@@ -171,8 +168,7 @@ public class SellerController implements Initializable, DataListener {
             }
         });
     }
-    
-    
+
     private void initDeleteButtons() {
         tbColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         tbColumnDelete.setCellFactory(param -> new TableCell<Seller, Seller>() {
@@ -194,43 +190,17 @@ public class SellerController implements Initializable, DataListener {
     }
 
     private void removeEntity(Seller obj) {
-        Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure you want to delete this department?");
+        Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure you want to delete this seller?");
         if (result.isPresent() && result.get() == ButtonType.OK) {
             if (service == null) {
                 throw new IllegalStateException("Service was null");
             }
             try {
-                service.delete(obj);     
-                updateTableView(); 
+                service.delete(obj);
+                updateTableView();
             } catch (DbIntegrityException e) {
-                Alerts.showMessage("Error removing department: ", null, e.getMessage(), AlertType.ERROR);
+                Alerts.showMessage("Error removing seller: ", null, e.getMessage(), AlertType.ERROR);
             }
         }
     }
-    
-
-    private void createDialogForm(Seller obj, String absoluteName, Stage parentStage) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-            Pane pane = loader.load();
-
-            SellerFormController controller = loader.getController();
-            controller.setSeller(obj);
-            controller.setServices(new SellerService(), new DepartmentService()); // Passa os serviços aqui também
-            controller.loadAssociatedObjects();
-            controller.subscribeDataListener(this);
-            controller.updateFormData();
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Enter Seller data");
-            dialogStage.setScene(new Scene(pane));
-            dialogStage.setResizable(false);
-            dialogStage.initOwner(parentStage);
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.showAndWait();
-        } catch (IOException e) {
-            Alerts.showMessage("IOException", "Error", e.getMessage(), AlertType.ERROR);
-        }
-    }
-    
 }

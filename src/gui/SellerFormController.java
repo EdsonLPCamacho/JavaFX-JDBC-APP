@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -117,10 +119,34 @@ public class SellerFormController implements Initializable {
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("Name", "The field can't be empty");
 		}
-
+		
+		
 		obj.setId(UtilDialog.tryParseToInt(txtId.getText()));
 		obj.setName(txtName.getText());
+		
 
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("Email", "The field can't be empty");
+		}
+		
+		obj.setEmail(txtEmail.getText());
+		
+		if(dbBirthDate.getValue() == null ) {
+			exception.addError("BirthDate", "The field can't be empty");
+		}else {
+			Instant instant = Instant.from(dbBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		
+
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "The field can't be empty");
+		}
+		
+		obj.setBaseSalary(UtilDialog.tryParseToDouble(txtBaseSalary.getText()));
+		
+		obj.setDepartment(comboBoxDepartment.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -188,7 +214,12 @@ public class SellerFormController implements Initializable {
 		if (fields.contains("Name")) {
 			lblErrorName.setText(errors.get("Name"));
 		}
-
+		
+		lblErrorName.setText((fields.contains("Name") ? errors.get("Name") : ""));
+		lblErrorEmail.setText((fields.contains("Email") ? errors.get("Email") : ""));
+		lblErrorBirthDate.setText((fields.contains("birthDate") ? errors.get("birthDate") : ""));
+		lblErrorBaseSalary.setText((fields.contains("baseSalary") ? errors.get("baseSalary") : ""));
+		
 	}
 
 	private void initializeComboBoxDepartment() {
